@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: vle7-app-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+  - name: vle7.rules
+    rules:
+    - alert: DevOpsAppUnavailable
+      expr: kube_deployment_status_replicas_available{namespace="default",deployment="devops-app"} < 1
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "VLE-7 application has no available replicas"
+        description: "The devops-app deployment has zero available replicas for more than one minute."
